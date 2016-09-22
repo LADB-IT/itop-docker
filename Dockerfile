@@ -4,8 +4,8 @@ MAINTAINER Michael Holt
 # Install packages
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
-  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt install php5-mcrypt php5-gd php5-ldap php5-cli php-soap php5-json graphviz wget unzip && \
-  echo "ServerName localhost" >> /etc/apache2/apache2.conf
+  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt install php5-mcrypt php5-gd php5-ldap php5-cli php-soap php5-json graphviz wget unzip
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Add image configuration and scripts
 ADD start-apache2.sh /start-apache2.sh
