@@ -1,10 +1,21 @@
-FROM tutum/lamp:latest
-MAINTAINER Vladimir Kunin <vladimir@itop-itsm.ru>
+FROM ubuntu:trusty
+MAINTAINER Michael Holt
 
-# Install additional packages
+# Install packages
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
-  apt-get -y install php5-mcrypt php5-gd php5-ldap php5-cli php-soap php5-json graphviz wget unzip
+  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt install php5-mcrypt php5-gd php5-ldap php5-cli php-soap php5-json graphviz wget unzip && \
+  echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Add image configuration and scripts
+ADD start-apache2.sh /start-apache2.sh
+ADD run.sh /run.sh
+RUN chmod 755 /*.sh
+ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
+
 RUN php5enmod mcrypt ldap gd
+
+RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app /var/www/html
 
 # Add cron config and scripts
 ADD supervisord-cron.conf /etc/supervisor/conf.d/supervisord-cron.conf
@@ -45,5 +56,5 @@ RUN chown -R www-data:www-data /app
 ENV PHP_UPLOAD_MAX_FILESIZE 8M
 ENV PHP_POST_MAX_SIZE 10M
 
-EXPOSE 80 3306
+EXPOSE 80
 CMD ["/run.sh"]
